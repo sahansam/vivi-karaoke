@@ -6,7 +6,8 @@
   const folder = e => "events/" + e.id + "/";
   const src = (e, f) => "/" + folder(e) + f;
   const dt = e => new Date(e.date + "T00:00");
-  const today = new Date(); today.setHours(0, 0, 0, 0);
+  // an event stays "upcoming" until 6:00 the next morning (karaoke runs past midnight)
+  const today = new Date(Date.now() - 6 * 3600 * 1000); today.setHours(0, 0, 0, 0);
   const upcoming = list.filter(e => dt(e) >= today).sort((a, b) => dt(a) - dt(b));
   const past = list.filter(e => dt(e) < today).sort((a, b) => dt(b) - dt(a));
   const fmt = (e, o) => dt(e).toLocaleDateString("de-DE", o);
@@ -97,7 +98,7 @@
   if (home) {
     if (upcoming.length) {
       home.innerHTML = `<h2>Nächster Karaoke-Abend</h2>${card(upcoming[0], false)}
-        <a class="ev-more" href="/events">Alle Termine &amp; Fotos →</a>`;
+        <a class="ev-more" href="/events">${upcoming.length > 1 ? "+" + (upcoming.length - 1) + (upcoming.length > 2 ? " weitere Termine" : " weiterer Termin") + " &amp; Fotos →" : "Alle Termine &amp; Fotos →"}</a>`;
       wire(home);
     } else if (past.some(e => e.photos && e.photos.length)) {
       home.innerHTML = `<a class="ev-more" href="/events">📸 Fotos von unseren Abenden →</a>`;
