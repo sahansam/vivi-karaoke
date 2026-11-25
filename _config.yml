@@ -1,0 +1,3 @@
+# GitHub Pages settings: keep the guide on GitHub only, not on vivikaraoke.de
+exclude:
+  - README.md

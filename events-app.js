@@ -1,7 +1,11 @@
 /* Renders events from events.js – no need to edit this file. */
 (function () {
   const BASE = "https://vivikaraoke.de/";
-  const list = (window.EVENTS || []).slice();
+  // photos can be a number (12 -> 01.jpg … 12.jpg) or a list of file names
+  const pad = (i, n) => String(i).padStart(n > 99 ? 3 : 2, "0") + ".jpg";
+  const list = (window.EVENTS || []).map(e => Object.assign({}, e, {
+    photos: typeof e.photos === "number" ? Array.from({ length: e.photos }, (_, i) => pad(i + 1, e.photos)) : (e.photos || [])
+  }));
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const folder = e => "events/" + e.id + "/";
   const src = (e, f) => "/" + folder(e) + f;
@@ -65,22 +69,53 @@
     lb.querySelector(".lb-c").textContent = many ? (idx + 1) + " / " + imgs.length : "";
   }
   function step(d) { idx = (idx + d + imgs.length) % imgs.length; show(); }
-  function closeLB() { lb.classList.remove("on"); document.body.style.overflow = ""; }
+  function closeLB() { lb.classList.remove("on"); if (!(al && al.classList.contains("on"))) document.body.style.overflow = ""; }
   window.__openLB = openLB;
 
-  /* ---- Event card */
-  function card(e, big) {
-    const fl = e.flyer ? `<button class="ev-fl" data-fl="${esc(src(e, e.flyer))}" aria-label="Flyer groß anzeigen"><img src="${esc(src(e, e.flyer))}" alt="Flyer: Karaoke im ${esc(e.venue)}, ${esc(when(e))}" loading="lazy"></button>` : "";
-    const tags = (e.info || []).map(t => `<li>${esc(t)}</li>`).join("");
-    return `<article class="ev${big ? " big" : ""}">${fl}<div class="ev-b">
+  /* ---- Event card (upcoming: Route + Teilen | past: Fotos) */
+  const whenPast = e => fmt(e, { weekday: "short", day: "numeric", month: "long", year: "numeric" });
+  function card(e, big, isPast) {
+    const fl = e.flyer ? `<button class="ev-fl" data-fl="${esc(src(e, e.flyer))}" aria-label="Flyer groß anzeigen"><img src="${esc(src(e, e.flyer))}" alt="Flyer: Karaoke im ${esc(e.venue)}, ${esc(isPast ? whenPast(e) : when(e))}" loading="lazy"></button>` : "";
+    const tags = isPast ? "" : (e.info || []).map(t => `<li>${esc(t)}</li>`).join("");
+    const n = (e.photos || []).length;
+    const actions = isPast
+      ? (n ? `<button class="ev-ph" data-id="${esc(e.id)}">📸 Fotos ansehen (${n})</button>`
+           : `<span class="ev-soon">📸 Fotos folgen bald</span>`)
+      : `<a href="${maps(e)}" target="_blank" rel="noopener">📍 Route</a><button class="ev-s" data-id="${esc(e.id)}">↗ Teilen</button>`;
+    return `<article class="ev${big ? " big" : ""}${isPast ? " past" : ""}">${fl}<div class="ev-b">
       <h3>${esc(e.venue)}</h3>
-      <p class="ev-d">${esc(when(e))}</p>
+      <p class="ev-d">${esc(isPast ? whenPast(e) : when(e))}</p>
       <p class="ev-v">${esc([e.address, e.city].filter(Boolean).join(", "))}</p>
       ${tags ? `<ul class="ev-t">${tags}</ul>` : ""}
-      ${big && e.text ? `<p class="ev-x">${esc(e.text)}</p>` : ""}
-      <div class="ev-a"><a href="${maps(e)}" target="_blank" rel="noopener">📍 Route</a><button class="ev-s" data-id="${esc(e.id)}">↗ Teilen</button></div>
+      ${big && e.text && !isPast ? `<p class="ev-x">${esc(e.text)}</p>` : ""}
+      <div class="ev-a">${actions}</div>
     </div></article>`;
   }
+
+  /* ---- Photo album (opens over the page; link: #fotos-<event-id>) */
+  let al;
+  function openAlbum(e, push) {
+    if (!al) {
+      al = document.createElement("div"); al.className = "alb"; al.setAttribute("role", "dialog"); al.setAttribute("aria-modal", "true");
+      document.body.appendChild(al);
+      document.addEventListener("keydown", ev => { if (ev.key === "Escape" && al.classList.contains("on") && !(lb && lb.classList.contains("on"))) closeAlbum(); });
+    }
+    al.innerHTML = `<div class="alb-in">
+      <div class="alb-h"><div><h3>${esc(e.venue)}</h3><p>${esc(whenPast(e))} · ${e.photos.length} Fotos</p></div>
+      <button class="alb-x" aria-label="Album schließen">✕</button></div>
+      <div class="al-g">${e.photos.map((f, i) => `<button data-i="${i}" aria-label="Foto ${i + 1} groß anzeigen"><img src="${esc(src(e, f))}" alt="Karaoke im ${esc(e.venue)}, ${esc(whenPast(e))}, Foto ${i + 1}" loading="lazy"></button>`).join("")}</div>
+    </div>`;
+    al.querySelector(".alb-x").onclick = closeAlbum;
+    al.onclick = ev => { if (ev.target === al) closeAlbum(); };
+    al.querySelectorAll(".al-g button").forEach(b => b.onclick = () => openLB(e.photos.map(f => src(e, f)), +b.dataset.i));
+    al.classList.add("on"); al.scrollTop = 0; document.body.style.overflow = "hidden";
+    if (push !== false) history.replaceState(null, "", "#fotos-" + e.id);
+  }
+  function closeAlbum() {
+    al.classList.remove("on"); document.body.style.overflow = "";
+    if (location.hash.startsWith("#fotos-")) history.replaceState(null, "", location.pathname + location.search);
+  }
+
   function wire(root) {
     root.querySelectorAll(".ev-fl").forEach(b => b.onclick = () => openLB([b.dataset.fl], 0));
     root.querySelectorAll(".ev-s").forEach(b => b.onclick = async () => {
@@ -91,10 +126,7 @@
       catch (_) { window.open("https://wa.me/?text=" + encodeURIComponent(text + " " + url), "_blank", "noopener"); return; }
       const old = b.textContent; b.textContent = "✓ Link kopiert"; setTimeout(() => b.textContent = old, 2000);
     });
-    root.querySelectorAll(".al-g button").forEach(b => b.onclick = () => {
-      const e = list.find(x => x.id === b.dataset.id);
-      openLB(e.photos.map(f => src(e, f)), +b.dataset.i);
-    });
+    root.querySelectorAll(".ev-ph").forEach(b => b.onclick = () => openAlbum(list.find(x => x.id === b.dataset.id)));
   }
 
   /* ---- Homepage: up to 3 next events; button to /events only when there are more */
@@ -109,6 +141,18 @@
     } else home.hidden = true;
   }
 
+  /* ---- Homepage: last 3 past events (newest first); button only when there are more */
+  const homePast = document.getElementById("pastEvents");
+  if (homePast) {
+    const MAX = 3, show = past.slice(0, MAX), more = past.length - show.length;
+    if (show.length) {
+      homePast.innerHTML = `<h2>Vergangene Karaoke-Abende</h2>
+        <div class="ev-list n${show.length}">${show.map(e => card(e, false, true)).join("")}</div>
+        ${more > 0 ? `<a class="ev-more" href="/events#vergangene">+${more} ${more > 1 ? "weitere vergangene Abende" : "weiterer vergangener Abend"} →</a>` : ""}`;
+      wire(homePast);
+    } else homePast.hidden = true;
+  }
+
   /* ---- Events page */
   const up = document.getElementById("evUpcoming"), pa = document.getElementById("evPast");
   if (up) {
@@ -117,12 +161,11 @@
     wire(up);
   }
   if (pa) {
-    const withPics = past.filter(e => e.photos && e.photos.length);
-    pa.innerHTML = withPics.length ? withPics.map(e => `<section class="al" id="${esc(e.id)}">
-        <h3>${esc(e.venue)} <span>· ${esc(fmt(e, { day: "numeric", month: "long", year: "numeric" }))}</span></h3>
-        <div class="al-g">${e.photos.map((f, i) => `<button data-id="${esc(e.id)}" data-i="${i}" aria-label="Foto ${i + 1} groß anzeigen"><img src="${esc(src(e, f))}" alt="Karaoke-Abend im ${esc(e.venue)}, Foto ${i + 1}" loading="lazy"></button>`).join("")}</div>
-      </section>`).join("")
-      : `<p class="ev-none">Die ersten Fotoalben kommen bald.</p>`;
+    pa.innerHTML = past.length ? past.map(e => card(e, true, true)).join("") : `<p class="ev-none">Noch keine vergangenen Abende.</p>`;
     wire(pa);
   }
+
+  /* ---- Open an album straight from a shared link (#fotos-<id>) */
+  const m = location.hash.match(/^#fotos-(.+)$/);
+  if (m) { const e = past.find(x => x.id === decodeURIComponent(m[1])); if (e && e.photos && e.photos.length) openAlbum(e, false); }
 })();
