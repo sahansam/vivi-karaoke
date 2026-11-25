@@ -24,7 +24,7 @@ window.EVENTS = [
     venue:   "Massi's Taverna",
     address: "Kirchgasse 11",
     city:    "71706 Markgröningen",
-    info:    ["Eintritt frei"],
+    info:    ["Raucherlokal","Eintritt frei"],
     text:    "Karaoke Night in Massi's Taverna in Markgröningen – komm vorbei und sing mit!",
     flyer:   "flyer.jpg",
     photos:  [
