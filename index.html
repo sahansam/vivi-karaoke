@@ -29,7 +29,7 @@
   "telephone": "+49 176 48664446",
   "email": "vivikaraoke26@gmail.com",
   "address": { "@type": "PostalAddress", "addressLocality": "Stuttgart", "addressRegion": "Baden-Württemberg", "addressCountry": "DE" },
-  "areaServed": ["Stuttgart","Ludwigsburg","Waiblingen","Schorndorf","Schwäbisch Gmünd","Esslingen am Neckar","Böblingen","Rudersberg","Markgröningen","Winnenden"],
+  "areaServed": ["Stuttgart", "Ludwigsburg", "Waiblingen", "Schorndorf", "Schwäbisch Gmünd", "Esslingen am Neckar", "Böblingen", "Winnenden", "Kornwestheim", "Markgröningen", "Asperg", "Bietigheim-Bissingen", "Möglingen", "Remseck", "Fellbach", "Backnang", "Rudersberg", "Welzheim", "Weinstadt", "Lorch", "Mutlangen", "Waldstetten", "Heubach", "Böbingen", "Rems-Murr-Kreis"],
   "sameAs": ["https://www.instagram.com/vivi.karaoke","https://www.facebook.com/vivi.karaoke.stuttgart/"],
   "makesOffer": [
     {"@type":"Offer","itemOffered":{"@type":"Service","name":"Karaoke-Abend für Kneipen und Bars"}},
@@ -172,7 +172,7 @@ footer nav{display:flex;justify-content:center;gap:16px;margin-top:6px}
 .tile{display:block;background:rgba(0,0,0,.25);border:1px solid rgba(227,184,88,.35);border-radius:16px;padding:14px 10px;text-align:center;color:var(--cream);text-decoration:none}
 .tile .ic{display:block;font-size:1.8rem;line-height:1}
 .tile b{display:block;margin-top:8px;font-size:.95rem}
-.tile b,.tile small,.tile span{hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word}
+.tile b,.tile small,.tile span{hyphens:manual;-webkit-hyphens:manual;overflow-wrap:break-word}
 .tile small{display:block;color:var(--mute);font-size:.8rem;margin-top:2px}
 a.tile:active{transform:scale(.98)}
 .faq details{border-bottom:1px solid rgba(251,241,220,.12);padding:12px 4px}
@@ -183,6 +183,13 @@ a.tile:active{transform:scale(.98)}
 .faq p{color:var(--mute);margin:8px 0 0}
 .chips{list-style:none;margin:0 0 12px;padding:0;display:flex;flex-wrap:wrap;gap:8px}
 .chips li{border:1px solid rgba(227,184,88,.5);border-radius:999px;padding:4px 12px;font-size:.88rem}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;text-align:center}
+.steps .n{width:38px;height:38px;margin:0 auto 6px;border-radius:50%;display:grid;place-items:center;background:var(--gold);color:var(--ink);font-weight:800}
+.steps b{display:block;font-size:.95rem}.steps span{display:block;color:var(--mute);font-size:.8rem;line-height:1.35}
+@media (min-width:960px){.steps{max-width:820px;margin:0 auto}.steps .n{width:52px;height:52px;font-size:1.25rem;margin-bottom:10px}.steps b{font-size:1.15rem}.steps span{font-size:.95rem}}
+.chips.cities{justify-content:center;gap:8px}
+.chips.cities li{border-color:rgba(227,184,88,.35);padding:5px 13px}
+@media (min-width:960px){.chips.cities{max-width:820px;margin:0 auto;gap:10px}.chips.cities li{font-size:.95rem;padding:6px 16px}}
 [hidden]{display:none!important}
 /* ---------- Tablet (iPad etc.): same layout as phone, just roomier ---------- */
 @media (min-width:640px) and (max-width:959px){
@@ -273,7 +280,7 @@ a.tile:active{transform:scale(.98)}
     <h2>Karaoke &amp; DJ für deine Party</h2>
     <p class="mini">Mobiler Karaoke-Service für Stuttgart &amp; Region – wir bringen alles mit, ihr singt.</p>
     <div class="grid">
-      <div class="tile"><span class="ic">🎤</span><b>Profi-Technik</b><small>Anlage, Funkmikros </small></div>
+      <div class="tile"><span class="ic">🎤</span><b>Profi-Technik</b><small>Anlage &amp; Funkmikros</small></div>
       <div class="tile"><span class="ic">📱</span><b>Songs per QR</b><small>Tausende Hits, alle Genres</small></div>
       <div class="tile"><span class="ic">🎉</span><b>Moderation</b><small>Vivi holt alle ans Mikro</small></div>
       <div class="tile"><span class="ic">🔌</span><b>Nur Steckdose</b><small>Auf- &amp; Abbau inklusive</small></div>
@@ -282,9 +289,15 @@ a.tile:active{transform:scale(.98)}
 
   <section class="sec" id="more">
     <h2>Wofür bucht ihr uns?</h2>
-    <div class="grid"><a class="tile" href="/karaoke-jga-stuttgart"><span class="ic">🥂</span><b>Junggesellenabschied</b></a><a class="tile" href="/karaoke-geburtstag-party"><span class="ic">🎂</span><b>Geburtstag &amp; Party</b></a><a class="tile" href="/karaoke-firmenfeier-stuttgart"><span class="ic">🏢</span><b>Firmen- &amp; Weihnachtsfeier</b></a><a class="tile" href="/karaoke-fuer-kneipen-bars"><span class="ic">🍺</span><b>Für Kneipen &amp; Bars</b></a></div>
-    <h2 style="margin-top:28px">Wo?</h2>
-    <div class="grid three"><a class="tile" href="/"><span class="ic">🎤</span><b>Stuttgart</b></a><a class="tile" href="/karaoke-ludwigsburg"><span class="ic">🏰</span><b>Ludwigsburg</b></a><a class="tile" href="/karaoke-rems-murr"><span class="ic">🍇</span><b>Rems-Murr-Kreis</b></a><a class="tile" href="/karaoke-schwaebisch-gmuend"><span class="ic">⛪</span><b>Schwäbisch Gmünd</b></a></div>
+    <div class="grid"><a class="tile" href="/karaoke-jga-stuttgart"><span class="ic">🥂</span><b>Junggesellen&shy;abschied</b></a><a class="tile" href="/karaoke-geburtstag-party"><span class="ic">🎂</span><b>Geburtstag &amp; Party</b></a><a class="tile" href="/karaoke-firmenfeier-stuttgart"><span class="ic">🏢</span><b>Firmen- &amp; Weihnachtsfeier</b></a><a class="tile" href="/karaoke-fuer-kneipen-bars"><span class="ic">🍺</span><b>Für Kneipen &amp; Bars</b></a></div>
+    <h2 style="margin-top:28px">So einfach geht’s</h2>
+    <div class="steps">
+      <div><div class="n">1</div><b>Anfragen</b><span>Datum, Ort &amp; Anlass per WhatsApp</span></div>
+      <div><div class="n">2</div><b>Wir bauen auf</b><span>Anlage &amp; Funkmikros</span></div>
+      <div><div class="n">3</div><b>Ihr singt</b><span>Vivi moderiert, ihr feiert</span></div>
+    </div>
+    <h2 style="margin-top:28px">Hier sind wir unterwegs</h2>
+    <ul class="chips cities"><li>Stuttgart</li><li>Ludwigsburg</li><li>Waiblingen</li><li>Schorndorf</li><li>Schwäbisch Gmünd</li><li>Esslingen</li><li>Böblingen</li><li>Winnenden</li><li>Kornwestheim</li><li>Markgröningen</li><li>Asperg</li><li>Bietigheim-Bissingen</li><li>Möglingen</li><li>Remseck</li><li>Fellbach</li><li>Backnang</li><li>Rudersberg</li><li>Welzheim</li><li>Weinstadt</li><li>Lorch</li><li>Mutlangen</li><li>Waldstetten</li><li>Heubach</li><li>Böbingen</li><li>Rems-Murr-Kreis</li></ul>
   </section>
 
   <section class="sec" id="faq">
