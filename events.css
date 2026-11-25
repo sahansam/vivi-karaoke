@@ -1,0 +1,34 @@
+/* Events, flyers, albums, lightbox */
+#nextEvent h2{margin-bottom:14px}
+.ev{display:grid;grid-template-columns:120px 1fr;gap:14px;background:rgba(0,0,0,.25);border:1px solid rgba(227,184,88,.35);border-radius:16px;padding:12px;margin:0 0 12px;text-align:left}
+.ev.big{grid-template-columns:1fr;padding:14px}
+.ev-fl{padding:0;border:0;background:none;cursor:zoom-in;border-radius:10px;overflow:hidden;display:block}
+.ev-fl img{display:block;width:100%;height:auto;border-radius:10px}
+.ev.big .ev-fl{max-width:360px;margin:0 auto;width:100%}
+.ev-b{min-width:0}
+.ev-d{margin:0;color:var(--gold);font-weight:700;font-size:.85rem;text-transform:capitalize}
+.ev h3{margin:4px 0 6px;font-size:1.1rem;color:var(--cream)}
+.ev-v{margin:0 0 8px;color:var(--mute);font-size:.9rem;line-height:1.4}
+.ev-v b{color:var(--cream)}
+.ev-t{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.ev-t li{font-size:.75rem;border:1px solid rgba(227,184,88,.45);border-radius:999px;padding:2px 9px;color:var(--cream)}
+.ev-x{margin:0 0 10px;color:var(--cream);font-size:.95rem}
+.ev-a{display:flex;flex-wrap:wrap;gap:8px}
+.ev-a a,.ev-a button{font:inherit;font-size:.85rem;font-weight:700;padding:7px 12px;border-radius:999px;border:0;background:var(--gold);color:var(--ink);text-decoration:none;cursor:pointer}
+.ev-a button{background:transparent;color:var(--cream);border:1px solid rgba(227,184,88,.6)}
+.ev-more{display:block;text-align:center;padding:12px;border-radius:12px;border:1px dashed rgba(227,184,88,.5);color:var(--gold);text-decoration:none;font-weight:700}
+.ev-none{text-align:center;color:var(--mute)}
+.al{margin:0 0 26px}
+.al h3{font-size:1.05rem;margin:0 0 10px;color:var(--cream)}
+.al h3 span{color:var(--mute);font-weight:400}
+.al-g{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.al-g button{padding:0;border:0;background:#000;aspect-ratio:1;overflow:hidden;border-radius:6px;cursor:zoom-in}
+.al-g img{width:100%;height:100%;object-fit:cover;display:block}
+.lb{position:fixed;inset:0;z-index:99;background:#0d0611;display:none;align-items:center;justify-content:center;padding:48px 8px}
+.lb.on{display:flex}
+.lb img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px}
+.lb button{position:absolute;background:rgba(0,0,0,.5);color:#fff;border:0;border-radius:50%;width:44px;height:44px;font-size:1.6rem;line-height:1;cursor:pointer}
+.lb-x{top:10px;right:10px;font-size:1.2rem!important}
+.lb-p{left:8px;top:50%;transform:translateY(-50%)}
+.lb-n{right:8px;top:50%;transform:translateY(-50%)}
+.lb-c{position:absolute;bottom:14px;left:0;right:0;text-align:center;color:#ddd;font-size:.85rem}

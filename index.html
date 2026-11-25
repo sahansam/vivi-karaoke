@@ -185,6 +185,7 @@ a.tile:active{transform:scale(.98)}
 [hidden]{display:none!important}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
+<link rel="stylesheet" href="/events.css">
 </head>
 <body>
 <main class="wrap">
@@ -213,6 +214,8 @@ a.tile:active{transform:scale(.98)}
       Seite teilen
     </button>
   </div>
+
+  <section class="sec" id="nextEvent"></section>
 
   <section class="sec" id="about">
     <h2>Karaoke &amp; DJ für deine Party</h2>
@@ -422,5 +425,7 @@ $("#sharePage").addEventListener("click", async () => {
   setInterval(() => { k = (k + 1) % 3; els.forEach((b, i) => b.classList.toggle("on", i % 3 !== k)); }, 260);
 })();
 </script>
+<script src="/events.js"></script>
+<script src="/events-app.js"></script>
 </body>
 </html>
