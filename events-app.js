@@ -64,6 +64,7 @@
   }
   function show() {
     lb.querySelector("img").src = imgs[idx];
+    [idx + 1, idx - 1].forEach(j => { if (imgs.length > 1) new Image().src = imgs[(j + imgs.length) % imgs.length]; });
     const many = imgs.length > 1;
     lb.querySelector(".lb-p").hidden = lb.querySelector(".lb-n").hidden = !many;
     lb.querySelector(".lb-c").textContent = many ? (idx + 1) + " / " + imgs.length : "";
@@ -103,7 +104,7 @@
     al.innerHTML = `<div class="alb-in">
       <div class="alb-h"><div><h3>${esc(e.venue)}</h3><p>${esc(whenPast(e))} · ${e.photos.length} Fotos</p></div>
       <button class="alb-x" aria-label="Album schließen">✕</button></div>
-      <div class="al-g">${e.photos.map((f, i) => `<button data-i="${i}" aria-label="Foto ${i + 1} groß anzeigen"><img src="${esc(src(e, f))}" alt="Karaoke im ${esc(e.venue)}, ${esc(whenPast(e))}, Foto ${i + 1}" loading="lazy"></button>`).join("")}</div>
+      <div class="al-g">${e.photos.map((f, i) => `<button data-i="${i}" aria-label="Foto ${i + 1} groß anzeigen"><img src="${esc(src(e, "thumbs/" + f))}" data-full="${esc(src(e, f))}" onerror="if(this.src!==this.dataset.full)this.src=this.dataset.full" alt="Karaoke im ${esc(e.venue)}, ${esc(whenPast(e))}, Foto ${i + 1}" loading="lazy" decoding="async"></button>`).join("")}</div>
     </div>`;
     al.querySelector(".alb-x").onclick = closeAlbum;
     al.onclick = ev => { if (ev.target === al) closeAlbum(); };
