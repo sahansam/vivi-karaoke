@@ -60,7 +60,7 @@ window.EVENTS = [
     info:    ["Raucherlokal", "Eintritt frei"],
     text:    "Karaoke by Vivi in Massi's Taverna – singen, lachen, Spaß haben.",
     flyer:   "flyer.jpg",
-    photos:  0,
+    photos:  3,
   },
 
 ];
