@@ -17,6 +17,21 @@
 window.EVENTS = [
 
   {
+    id:      "2027-01-09-massis-taverna",
+    date:    "2027-01-09",
+    time:    "20:00",
+    title:   "Karaoke Night mit Vivi",
+    venue:   "Massi's Taverna",
+    address: "Kirchgasse 11",
+    city:    "71706 Markgröningen",
+    info:    ["Eintritt frei"],
+    text:    "Karaoke Night in Massi's Taverna in Markgröningen – komm vorbei und sing mit!",
+    flyer:   "flyer.jpg",
+    photos:  [
+    ],
+  },
+
+  {
     id:      "2026-11-28-lincontro",          // = folder name
     date:    "2026-11-28",                     // JJJJ-MM-TT
     time:    "21:00",
