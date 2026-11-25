@@ -32,7 +32,7 @@ window.EVENTS = [
     info:    ["Raucherlokal", "Eintritt frei"],
     text:    "Karaoke Night in Massi's Taverna in Markgröningen – komm vorbei und sing mit!",
     flyer:   "flyer.jpg",
-    photos:  0,
+    photos:  4,
   },
 
   {
