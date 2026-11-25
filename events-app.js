@@ -93,15 +93,15 @@
     });
   }
 
-  /* ---- Homepage: next event card */
+  /* ---- Homepage: up to 3 next events; button to /events only when there are more */
   const home = document.getElementById("nextEvent");
   if (home) {
-    if (upcoming.length) {
-      home.innerHTML = `<h2>Nächster Karaoke-Abend</h2>${card(upcoming[0], false)}
-        <a class="ev-more" href="/events">${upcoming.length > 1 ? "+" + (upcoming.length - 1) + (upcoming.length > 2 ? " weitere Termine" : " weiterer Termin") + " &amp; Fotos →" : "Alle Termine &amp; Fotos →"}</a>`;
+    const MAX = 3, show = upcoming.slice(0, MAX), more = upcoming.length - show.length;
+    if (show.length) {
+      home.innerHTML = `<h2>${show.length > 1 ? "Nächste Karaoke-Abende" : "Nächster Karaoke-Abend"}</h2>
+        <div class="ev-list n${show.length}">${show.map(e => card(e, false)).join("")}</div>
+        ${more > 0 ? `<a class="ev-more" href="/events">+${more} ${more > 1 ? "weitere Termine" : "weiterer Termin"} →</a>` : ""}`;
       wire(home);
-    } else if (past.some(e => e.photos && e.photos.length)) {
-      home.innerHTML = `<a class="ev-more" href="/events">📸 Fotos von unseren Abenden →</a>`;
     } else home.hidden = true;
   }
 
