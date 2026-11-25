@@ -44,12 +44,13 @@
   }
 
   /* ---- Lightbox (flyers + albums) */
-  let lb, imgs = [], idx = 0;
-  function openLB(arr, i) {
-    imgs = arr; idx = i;
+  let lb, imgs = [], idx = 0, ctx = null;
+  const WA = "4917648664446";
+  function openLB(arr, i, ev) {
+    imgs = arr; idx = i; ctx = ev || null;
     if (!lb) {
       lb = document.createElement("div"); lb.className = "lb"; lb.setAttribute("role", "dialog"); lb.setAttribute("aria-modal", "true");
-      lb.innerHTML = '<button class="lb-x" aria-label="Schließen">✕</button><button class="lb-p" aria-label="Zurück">‹</button><img alt=""><button class="lb-n" aria-label="Weiter">›</button><div class="lb-c"></div>';
+      lb.innerHTML = '<button class="lb-x" aria-label="Schließen">✕</button><button class="lb-p" aria-label="Zurück">‹</button><img alt=""><button class="lb-n" aria-label="Weiter">›</button><div class="lb-c"></div><a class="lb-o" target="_blank" rel="noopener" hidden>💬 Dieses Foto in Originalqualität</a>';
       document.body.appendChild(lb);
       lb.querySelector(".lb-x").onclick = closeLB;
       lb.querySelector(".lb-p").onclick = ev => { ev.stopPropagation(); step(-1); };
@@ -68,6 +69,8 @@
     const many = imgs.length > 1;
     lb.querySelector(".lb-p").hidden = lb.querySelector(".lb-n").hidden = !many;
     lb.querySelector(".lb-c").textContent = many ? (idx + 1) + " / " + imgs.length : "";
+    const o = lb.querySelector(".lb-o"); o.hidden = !ctx;
+    if (ctx) o.href = "https://wa.me/" + WA + "?text=" + encodeURIComponent(`Hallo Vivi! 😊 Ich war beim Karaoke-Abend im ${ctx.venue} (${whenPast(ctx)}) und hätte gern Foto Nr. ${idx + 1} in Originalqualität. Vielen Dank!`);
   }
   function step(d) { idx = (idx + d + imgs.length) % imgs.length; show(); }
   function closeLB() { lb.classList.remove("on"); if (!(al && al.classList.contains("on"))) document.body.style.overflow = ""; }
@@ -80,7 +83,7 @@
     const tags = isPast ? "" : (e.info || []).map(t => `<li>${esc(t)}</li>`).join("");
     const n = (e.photos || []).length;
     const actions = isPast
-      ? (n ? `<button class="ev-ph" data-id="${esc(e.id)}">📸 Fotos ansehen (${n})</button>`
+      ? (n ? `<button class="ev-ph" data-id="${esc(e.id)}">📸 ${n === 1 ? "Foto ansehen" : "Fotos ansehen"} (${n})</button>`
            : `<span class="ev-soon">📸 Fotos folgen bald</span>`)
       : `<a href="${maps(e)}" target="_blank" rel="noopener">📍 Route</a><button class="ev-s" data-id="${esc(e.id)}">↗ Teilen</button>`;
     return `<article class="ev${big ? " big" : ""}${isPast ? " past" : ""}">${fl}<div class="ev-b">
@@ -102,13 +105,15 @@
       document.addEventListener("keydown", ev => { if (ev.key === "Escape" && al.classList.contains("on") && !(lb && lb.classList.contains("on"))) closeAlbum(); });
     }
     al.innerHTML = `<div class="alb-in">
-      <div class="alb-h"><div><h3>${esc(e.venue)}</h3><p>${esc(whenPast(e))} · ${e.photos.length} Fotos</p></div>
+      <div class="alb-h"><div><h3>${esc(e.venue)}</h3><p>${esc(whenPast(e))} · ${e.photos.length} ${e.photos.length === 1 ? "Foto" : "Fotos"}</p>
+      <p class="alb-note">© Vivi's Mic Drop · Du möchtest ein Foto in Originalqualität? <a href="https://wa.me/${WA}?text=${encodeURIComponent("Hallo Vivi! 😊 Ich war beim Karaoke-Abend im " + e.venue + " (" + whenPast(e) + ") und hätte gern ein paar Fotos in Originalqualität. Vielen Dank!")}" target="_blank" rel="noopener">Schreib uns auf WhatsApp</a> – wir schicken es dir gern zu.</p>
+      <p class="alb-note alb-small">Du bist auf einem Foto und möchtest es nicht online sehen? <a href="https://wa.me/${WA}?text=${encodeURIComponent("Hallo Vivi, bitte entfernt ein Foto vom Karaoke-Abend im " + e.venue + " (" + whenPast(e) + "). Foto Nr.: ")}" target="_blank" rel="noopener">Kurze Nachricht genügt</a> – wir entfernen es umgehend.</p></div>
       <button class="alb-x" aria-label="Album schließen">✕</button></div>
       <div class="al-g">${e.photos.map((f, i) => `<button data-i="${i}" aria-label="Foto ${i + 1} groß anzeigen"><img src="${esc(src(e, "thumbs/" + f))}" data-full="${esc(src(e, f))}" onerror="if(this.src!==this.dataset.full)this.src=this.dataset.full" alt="Karaoke im ${esc(e.venue)}, ${esc(whenPast(e))}, Foto ${i + 1}" loading="lazy" decoding="async"></button>`).join("")}</div>
     </div>`;
     al.querySelector(".alb-x").onclick = closeAlbum;
     al.onclick = ev => { if (ev.target === al) closeAlbum(); };
-    al.querySelectorAll(".al-g button").forEach(b => b.onclick = () => openLB(e.photos.map(f => src(e, f)), +b.dataset.i));
+    al.querySelectorAll(".al-g button").forEach(b => b.onclick = () => openLB(e.photos.map(f => src(e, f)), +b.dataset.i, e));
     al.classList.add("on"); al.scrollTop = 0; document.body.style.overflow = "hidden";
     if (push !== false) history.replaceState(null, "", "#fotos-" + e.id);
   }

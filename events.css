@@ -85,3 +85,12 @@
 .alb-x{flex:none;width:44px;height:44px;border-radius:50%;border:1px solid rgba(227,184,88,.5);background:transparent;color:var(--cream);font-size:1.1rem;cursor:pointer}
 @media (min-width:640px){.alb .al-g{grid-template-columns:repeat(4,1fr);gap:6px}}
 @media (min-width:960px){.alb .al-g{grid-template-columns:repeat(5,1fr);gap:8px}.alb-h h3{font-size:1.6rem}}
+
+/* "ask for the original" */
+.alb-note{margin:6px 0 0!important;font-size:.85rem!important;color:var(--cream)!important;max-width:62ch;line-height:1.45}
+.alb-note a{color:var(--gold);font-weight:700}
+.alb-small{font-size:.78rem!important;color:var(--mute)!important;margin-top:4px!important}
+.alb-small a{color:var(--mute);font-weight:600;text-decoration:underline}
+.lb-o{position:absolute;bottom:44px;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--gold);color:var(--ink);font-weight:700;font-size:.9rem;padding:10px 16px;border-radius:999px;text-decoration:none;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.lb-o[hidden]{display:none}
+.lb{padding-bottom:100px}
