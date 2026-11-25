@@ -25,7 +25,7 @@
   if (upcoming.length) {
     const ld = upcoming.map(e => ({
       "@context": "https://schema.org", "@type": "Event",
-      name: (e.title || "Karaoke-Abend") + " – " + e.venue,
+      name: "Karaoke-Abend im " + e.venue,
       startDate: e.date + "T" + (e.time || "20:00") + ":00" + offset(dt(e)),
       eventStatus: "https://schema.org/EventScheduled",
       eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
@@ -70,22 +70,26 @@
 
   /* ---- Event card */
   function card(e, big) {
-    const fl = e.flyer ? `<button class="ev-fl" data-fl="${esc(src(e, e.flyer))}" aria-label="Flyer groß anzeigen"><img src="${esc(src(e, e.flyer))}" alt="Flyer: ${esc(e.title)} im ${esc(e.venue)}, ${esc(when(e))}" loading="lazy"></button>` : "";
+    const fl = e.flyer ? `<button class="ev-fl" data-fl="${esc(src(e, e.flyer))}" aria-label="Flyer groß anzeigen"><img src="${esc(src(e, e.flyer))}" alt="Flyer: Karaoke im ${esc(e.venue)}, ${esc(when(e))}" loading="lazy"></button>` : "";
     const tags = (e.info || []).map(t => `<li>${esc(t)}</li>`).join("");
     return `<article class="ev${big ? " big" : ""}">${fl}<div class="ev-b">
+      <h3>${esc(e.venue)}</h3>
       <p class="ev-d">${esc(when(e))}</p>
-      <h3>${esc(e.title)}</h3>
-      <p class="ev-v"><b>${esc(e.venue)}</b><br>${esc([e.address, e.city].filter(Boolean).join(", "))}</p>
+      <p class="ev-v">${esc([e.address, e.city].filter(Boolean).join(", "))}</p>
       ${tags ? `<ul class="ev-t">${tags}</ul>` : ""}
       ${big && e.text ? `<p class="ev-x">${esc(e.text)}</p>` : ""}
-      <div class="ev-a"><a href="${maps(e)}" target="_blank" rel="noopener">📍 Route</a>${navigator.share ? `<button class="ev-s" data-id="${esc(e.id)}">↗ Teilen</button>` : ""}</div>
+      <div class="ev-a"><a href="${maps(e)}" target="_blank" rel="noopener">📍 Route</a><button class="ev-s" data-id="${esc(e.id)}">↗ Teilen</button></div>
     </div></article>`;
   }
   function wire(root) {
     root.querySelectorAll(".ev-fl").forEach(b => b.onclick = () => openLB([b.dataset.fl], 0));
-    root.querySelectorAll(".ev-s").forEach(b => b.onclick = () => {
+    root.querySelectorAll(".ev-s").forEach(b => b.onclick = async () => {
       const e = list.find(x => x.id === b.dataset.id);
-      navigator.share({ title: e.title + " – " + e.venue, text: when(e) + " · " + e.venue, url: BASE + "events" }).catch(() => {});
+      const url = BASE + "events", title = "Karaoke im " + e.venue, text = title + " – " + when(e);
+      if (navigator.share) { navigator.share({ title, text, url }).catch(() => {}); return; }
+      try { await navigator.clipboard.writeText(text + " " + url); }       // laptops without a share menu
+      catch (_) { window.open("https://wa.me/?text=" + encodeURIComponent(text + " " + url), "_blank", "noopener"); return; }
+      const old = b.textContent; b.textContent = "✓ Link kopiert"; setTimeout(() => b.textContent = old, 2000);
     });
     root.querySelectorAll(".al-g button").forEach(b => b.onclick = () => {
       const e = list.find(x => x.id === b.dataset.id);

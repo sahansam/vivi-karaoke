@@ -9,8 +9,8 @@
 .ev.big .ev-fl{max-width:360px;margin:0 auto;width:100%}
 .ev-b{min-width:0}
 .ev-d{margin:0;color:var(--gold);font-weight:700;font-size:.85rem;text-transform:capitalize}
-.ev h3{margin:4px 0 6px;font-size:1.1rem;color:var(--cream)}
-.ev-v{margin:0 0 8px;color:var(--mute);font-size:.9rem;line-height:1.4}
+.ev h3{margin:0 0 4px;font-size:1.2rem;line-height:1.25;color:var(--cream)}
+.ev-v{margin:4px 0 10px;color:var(--mute);font-size:.9rem;line-height:1.4}
 .ev-v b{color:var(--cream)}
 .ev-t{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-wrap:wrap;gap:6px}
 .ev-t li{font-size:.75rem;border:1px solid rgba(227,184,88,.45);border-radius:999px;padding:2px 9px;color:var(--cream)}

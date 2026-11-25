@@ -16,7 +16,7 @@ h2{font-family:"Limelight",Georgia,serif;font-weight:400;color:var(--gold);font-
 .tile{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:16px;padding:16px 12px;text-align:center}
 .tile .ic{font-size:1.9rem;line-height:1}
 .tile b{display:block;margin:8px 0 2px}
-.tile b,.tile small,.tile span{hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word}
+.tile b,.tile small,.tile span{hyphens:manual;-webkit-hyphens:manual;overflow-wrap:break-word}
 .tile span{color:var(--mute);font-size:.86rem}
 a.tile{text-decoration:none;color:var(--cream)}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
