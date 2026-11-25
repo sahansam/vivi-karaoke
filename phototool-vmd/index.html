@@ -99,6 +99,7 @@ button.btn:disabled{opacity:.45;cursor:not-allowed}
 .bar{height:8px;background:#120a18;border-radius:99px;overflow:hidden;margin-top:12px}
 .bar i{display:block;height:100%;width:0;background:var(--gold);transition:width .2s}
 .msg{margin-top:10px;font-size:.95rem}
+#mode:not([hidden]){display:grid}
 .ok{color:#8fe3a0}.warn{color:#ffb4a8}
 ol{margin:6px 0 0;padding-left:20px;color:var(--cream)}ol li{margin:6px 0}
 code{background:#120a18;border:1px solid var(--line);border-radius:6px;padding:1px 6px;color:var(--gold)}
@@ -120,6 +121,10 @@ code{background:#120a18;border:1px solid var(--line);border-radius:6px;padding:1
 <div id="pick" hidden style="margin-top:10px"><p class="warn">Could not load the events. Reload the page – or select your <b>events.js</b> file (GitHub: events.js → Download raw file).</p>
 <input type="file" id="evfile" accept=".js,text/javascript"></div>
 <p id="have" style="margin-top:8px"></p>
+<div id="mode" hidden style="gap:8px;margin-top:4px">
+<label style="display:flex;gap:10px;align-items:center"><input type="radio" name="mode" value="add" checked> Add the new photos to the existing ones</label>
+<label style="display:flex;gap:10px;align-items:center"><input type="radio" name="mode" value="replace"> Replace the existing photos (start again at 01)</label>
+</div>
 </div>
 
 <div class="box">
@@ -171,7 +176,13 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   function parseEvents(text) {
     const w = {}; new Function("window", text)(w);           // events.js only defines window.EVENTS
     EVTEXT = text; evs = (w.EVENTS || []).slice().sort((a, b) => b.date.localeCompare(a.date));
-    $("ev").innerHTML = evs.map(e => `<option value="${e.id}">${fmt(e.date)} – ${e.venue}</option>`).join("");
+    const cut = new Date(Date.now() - 6 * 3600 * 1000); cut.setHours(0, 0, 0, 0);   // same 6:00 rule as the website
+    const isPast = e => new Date(e.date + "T00:00") < cut;
+    const past = evs.filter(isPast), up = evs.filter(e => !isPast(e)).reverse();
+    $("ev").innerHTML =
+      (past.length ? `<optgroup label="Past events – photos go here">${past.map(e => `<option value="${e.id}">${fmt(e.date)} – ${e.venue}</option>`).join("")}</optgroup>`
+                   : `<option value="">No past events yet</option>`) +
+      (up.length ? `<optgroup label="Upcoming – photos only after the night">${up.map(e => `<option value="${e.id}" disabled>${fmt(e.date)} – ${e.venue}</option>`).join("")}</optgroup>` : "");
     $("pick").hidden = true; showHave();
   }
   const count = e => typeof e.photos === "number" ? e.photos : (e.photos || []).length;
@@ -183,7 +194,8 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   function showHave() {
     const e = sel(); if (!e) { $("have").textContent = ""; return; }
     const n = count(e);
-    $("have").innerHTML = n ? `This event already has <b>${n}</b> photos – new ones are added after them.` : "No photos for this event yet.";
+    $("have").innerHTML = n ? `This event already has <b>${n}</b> photos.` : "No photos for this event yet.";
+    $("mode").hidden = !n; if (!n) document.querySelector('input[value=add]').checked = true;
   }
   $("ev").onchange = showHave;
   fetch("/events.js?" + Date.now(), { cache: "no-store" })
@@ -220,7 +232,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
     return { full: await toJpg(big, Q), thumb: await toJpg(small, TQ) };
   }
 
-  function updateEventsJs(text, e, newNames, total) {
+  function updateEventsJs(text, e, newNames, total, replace) {
     const idAt = text.search(new RegExp('id:\\s*"' + e.id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + '"'));
     if (idAt < 0) throw new Error("event not found in events.js");
     const pAt = text.indexOf("photos:", idAt);
@@ -229,7 +241,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
     if (after[0] === "[") end = text.indexOf("]", startVal) + 1;
     else end = startVal + after.match(/^\d+/)[0].length;
     let value;
-    if (Array.isArray(e.photos) && e.photos.length && !e.photos.every((f, i) => f === pad(i + 1, e.photos.length)))
+    if (!replace && Array.isArray(e.photos) && e.photos.length && !e.photos.every((f, i) => f === pad(i + 1, e.photos.length)))
       value = "[ " + e.photos.concat(newNames).map(f => JSON.stringify(f)).join(", ") + " ]";   // custom names kept
     else value = String(total);
     return text.slice(0, pAt) + "photos:  " + value + text.slice(end);
@@ -239,7 +251,8 @@ https://github.com/nodeca/pako/blob/main/LICENSE
     const e = sel(); if (!e || !files.length) return;
     
     $("go").disabled = true; $("next").hidden = true;
-    const start = count(e), total = start + files.length, zip = new JSZip(), dir = zip.folder("events/" + e.id);
+    const replace = document.querySelector('input[name=mode]:checked').value === "replace";
+    const start = replace ? 0 : count(e), total = start + files.length, zip = new JSZip(), dir = zip.folder("events/" + e.id);
     const names = [], skipped = [];
     for (let i = 0; i < files.length; i++) {
       const name = pad(start + names.length + 1, total);
@@ -250,7 +263,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
     }
     if (!names.length) { $("msg").innerHTML = '<span class="warn">None of the photos could be read. iPhone HEIC photos: send them to yourself via WhatsApp/AirDrop first, or set iPhone Settings → Camera → Formats → "Most Compatible".</span>'; $("go").disabled = false; return; }
     const finalTotal = start + names.length;
-    zip.file("events.js", updateEventsJs(EVTEXT, e, names, finalTotal));
+    zip.file("events.js", updateEventsJs(EVTEXT, e, names, finalTotal, replace));
     const blob = await zip.generateAsync({ type: "blob" });
     const zipName = "fotos-" + e.id + ".zip";
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = zipName; document.body.appendChild(a); a.click(); a.remove();
