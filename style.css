@@ -16,6 +16,7 @@ h2{font-family:"Limelight",Georgia,serif;font-weight:400;color:var(--gold);font-
 .tile{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:16px;padding:16px 12px;text-align:center}
 .tile .ic{font-size:1.9rem;line-height:1}
 .tile b{display:block;margin:8px 0 2px}
+.tile b,.tile small,.tile span{hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word}
 .tile span{color:var(--mute);font-size:.86rem}
 a.tile{text-decoration:none;color:var(--cream)}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
@@ -32,3 +33,45 @@ a.tile{text-decoration:none;color:var(--cream)}
 .sticky{position:sticky;bottom:12px;margin-top:28px}
 footer{margin-top:30px;font-size:.82rem;color:var(--mute);text-align:center}
 footer a{color:var(--mute);margin:0 6px}
+
+/* Laptop / desktop */
+@media (min-width:960px){
+  main{max-width:1040px;padding:28px 40px 56px}
+  .hero{padding:56px 0 16px}
+  .hero .ic{font-size:4rem}
+  h1{font-size:3rem}
+  .lead{font-size:1.2rem}
+  .hero .btn{display:inline-flex;padding:0 40px}
+  h2{font-size:1.9rem;margin:64px 0 22px}
+  .grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+  .tile{padding:24px 14px}
+  .tile .ic{font-size:2.3rem}
+  a.tile{transition:transform .15s,border-color .15s}
+  a.tile:hover{transform:translateY(-3px);border-color:var(--gold)}
+  .steps{max-width:760px;margin:0 auto}
+  .steps .n{width:48px;height:48px;font-size:1.2rem}
+  .steps b{font-size:1.1rem}.steps span{font-size:.92rem}
+  .chips{max-width:760px;margin:0 auto}
+  .chips li{font-size:.95rem;padding:6px 16px}
+  .faq{max-width:760px;margin:0 auto}
+  .sticky{position:static;max-width:420px;margin:48px auto 0}
+  .al-g{grid-template-columns:repeat(5,1fr);gap:8px}
+  main>.btn{max-width:420px;margin:0 auto}
+}
+
+/* Tablet */
+@media (min-width:640px) and (max-width:959px){
+  main{max-width:720px;padding:24px 28px 48px}
+  h1{font-size:2.5rem}
+  .lead{font-size:1.12rem}
+  .hero .btn{display:inline-flex;padding:0 36px}
+  h2{font-size:1.6rem}
+  .grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+  .steps span{font-size:.88rem}
+  .sticky{max-width:420px;margin-left:auto;margin-right:auto}
+}
+/* Big monitors */
+@media (min-width:1600px){
+  html{font-size:17px}
+  main{max-width:1160px}
+}
